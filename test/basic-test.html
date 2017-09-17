@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <link rel="import" href="../websocket-panel.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <websocket-panel></websocket-panel>
+      </template>
+    </test-fixture>
+
+    <script>
+    /* global fixture, assert, TestHelpers */
+    suite('basic', function() {
+
+      var element;
+      setup(function() {
+        element = fixture('basic');
+        TestHelpers.forceXIfStamp(element);
+      });
+
+      test('hasHistoryData is not computed', function() {
+        assert.isUndefined(element.hasHistoryData);
+      });
+
+      test('_eventsTarget is the element', function() {
+        assert.isTrue(element._eventsTarget === element);
+      });
+
+      test('renderHistory is computed', function() {
+        assert.isTrue(element.renderHistory);
+      });
+
+      test('websocket-data-view is not in the DOM', function() {
+        assert.notOk(element.$$('websocket-data-view'));
+      });
+
+      test('websocket-data-view is in the DOM when messages are set', function() {
+        element.messages = [];
+        TestHelpers.forceXIfStamp(element);
+        assert.ok(element.$$('websocket-data-view'));
+      });
+
+      test('websocket-history is in the DOM', function() {
+        assert.ok(element.$$('websocket-history'));
+      });
+
+      test('websocket-history is hidden when connecting', function() {
+        element.connecting = true;
+        TestHelpers.forceXIfStamp(element);
+        var display = getComputedStyle(element.$$('websocket-history')).display;
+        assert.equal(display, 'none');
+      });
+
+      test('websocket-history is hidden when connected', function() {
+        element.connected = true;
+        TestHelpers.forceXIfStamp(element);
+        var display = getComputedStyle(element.$$('websocket-history')).display;
+        assert.equal(display, 'none');
+      });
+    });
+    </script>
+
+  </body>
+</html>
