@@ -1,6 +1,6 @@
 <!--
 @license
-Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of
 the License at
@@ -11,31 +11,10 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../arc-models/websocket-url-history-model.html">
-<link rel="import" href="../openable-panel-behavior/openable-panel-behavior.html">
+<link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../websocket-request/websocket-request.html">
 <link rel="import" href="../websocket-data-view/websocket-data-view.html">
 <link rel="import" href="../websocket-history/websocket-history.html">
-<!--
-A web socket panel with the request and history of calls
-
-### Example
-```
-<websocket-panel></websocket-panel>
-```
-
-### Styling
-`<websocket-panel>` provides the following custom properties and mixins for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--websocket-panel` | Mixin applied to the element | `{}`
-
-@group UI Elements
-@element websocket-panel
-@demo demo/index.html
--->
 <dom-module id="websocket-panel">
   <template>
     <style>
@@ -56,142 +35,151 @@ Custom property | Description | Default
     <template is="dom-if" if="[[renderHistory]]">
       <websocket-history items="[[history]]" on-socket-url-changed="_historyUrlSelected"></websocket-history>
     </template>
-    <websocket-url-history-model events-target="[[_eventsTarget]]"></websocket-url-history-model>
   </template>
   <script>
-  Polymer({
-    is: 'websocket-panel',
+  /**
+   * A web socket panel with the request and history of calls.
+   *
+   * Changes in version 2
+   *
+   * - Model is not included into the DOM, add `arc-models/websocket-url-history-model.html`
+   * component to your application to handle database queries.
+   *
+   * To styles the component check `websocket-request`, `websocket-data-view`
+   * and `websocket-history` components.
+   *
+   * @customElement
+   * @polymer
+   * @memberof UiElements
+   * @demo demo/index.html
+   */
+  class WebsocketPanel extends Polymer.Element {
+    static get is() {return 'websocket-panel';}
+    static get properties() {
+      return {
+        /**
+         * Remote URL to connect to
+         */
+        url: {
+          type: String,
+          notify: true
+        },
+        // List of history data from the datastore.
+        history: Array,
+        // Computed value, true if the element has history data.
+        hasHistoryData: {
+          type: Boolean,
+          notify: true,
+          computed: '_computeHasHistoryData(history)'
+        },
+        // If true then the element is loading the history data.
+        loading: {
+          type: Boolean,
+          notify: true,
+          readOnly: true
+        },
+        // True when connecting to a server
+        connecting: Boolean,
+        /**
+         * True if the socket is connected.
+         */
+        connected: Boolean,
+        // Computed value, is set then the connections history is rendered
+        renderHistory: {
+          type: Boolean,
+          computed: '_computeRenderHistory(connecting, connected)'
+        },
+        // List of communication messages with the server.
+        messages: Array
+      };
+    }
 
-    behaviors: [ArcBehaviors.OpenablePanelBehavior],
+    constructor() {
+      super();
+      this._storeItemChanged = this._storeItemChanged.bind(this);
+    }
 
-    properties: {
-      /**
-       * Remote URL to connect to
-       */
-      url: {
-        type: String,
-        notify: true
-      },
-      // List of history data from the datastore.
-      history: Array,
-      // Computed value, true if the element has history data.
-      hasHistoryData: {
-        type: Boolean,
-        notify: true,
-        computed: '_computeHasHistoryData(history)'
-      },
-      // If true then the element is loading the history data.
-      loading: {
-        type: Boolean,
-        notify: true,
-        readOnly: true
-      },
-      // Event target for the model.
-      _eventsTarget: {
-        readOnly: true,
-        type: Object,
-        value: function() {
-          return this;
-        }
-      },
-      // True when connecting to a server
-      connecting: Boolean,
-      /**
-       * True if the socket is connected.
-       */
-      connected: Boolean,
-      // Computed value, is set then the connections history is rendered
-      renderHistory: {
-        type: Boolean,
-        computed: '_computeRenderHistory(connecting, connected)'
-      },
-      // List of communication messages with the server.
-      messages: Array
-    },
-
-    observers: ['_openedChanged(_isOpened)'],
-
-    attached: function() {
-      this.listen(window, 'websocket-url-history-changed', '_storeItemChanged');
-    },
-
-    detached: function() {
-      this.unlisten(window, 'websocket-url-history-changed', '_storeItemChanged');
-    },
-
-    ready: function() {
-      if (this.opened && !this.loading && !this.history) {
+    connectedCallback() {
+      super.connectedCallback();
+      window.addEventListener('websocket-url-history-changed', this._storeItemChanged);
+      if (!this.loading && !this.history) {
         this._queryHistory();
       }
-    },
+    }
 
-    _openedChanged: function(opened) {
-      if (!opened) {
-        return this.set('history', []);
-      }
-      this._queryHistory();
-    },
-    // Sends `websocket-url-history-list` event to query the history.
-    _queryHistory: function() {
-      var model = this.$$('websocket-url-history-model');
-      if (!model) {
-        return;
-      }
-      this._setLoading(true);
-      var event = this.fire('websocket-url-history-list', {}, {
-        cancelable: true
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      window.removeEventListener('websocket-url-history-changed', this._storeItemChanged);
+    }
+
+    /**
+     * Sends `websocket-url-history-list` event to query the history.
+     */
+    _queryHistory() {
+      const e = new CustomEvent('websocket-url-history-list', {
+        cancelable: true,
+        composed: true,
+        bubbles: true,
+        detail: {}
       });
-      if (!event.detail.result) {
-        this._setLoading(false);
+      this.dispatchEvent(e);
+      if (!e.detail.result) {
         throw new Error('Query not handled');
       }
-      event.detail.result
-      .then(data => {
+      this._setLoading(true);
+      e.detail.result
+      .then((data) => {
         this._setLoading(false);
         this.set('history', data);
       })
       .catch(() => {
         this._setLoading(false);
       });
-    },
+    }
 
-    // Handler for the `websocket-url-history-changed`. Updated the item in `history`
-    _storeItemChanged: function(e) {
+    /**
+     *  Handler for the `websocket-url-history-changed`. Updates the item in
+     *  the `history` list if available.
+     * @param {CustomEvent} e
+     */
+    _storeItemChanged(e) {
       if (e.cancelable) {
         return;
       }
       if (!this.history) {
-        return this.set('history', e.detail.item);
+        this.set('history', e.detail.item);
+        return;
       }
-      var id = e.detail.item._id;
-      var index = this.history.findIndex(item => item._id === id);
+      const id = e.detail.item._id;
+      const index = this.history.findIndex((item) => item._id === id);
       if (index === -1) {
         this.push('history', e.detail.item);
       } else {
         this.set(['history', index], e.detail.item);
       }
-    },
+    }
 
     // Computes `hasData` property based on the `history` state.
-    _computeHasHistoryData: function(history) {
+    _computeHasHistoryData(history) {
       if (!history || !history.length) {
         return false;
       }
       return true;
-    },
+    }
 
-    _historyUrlSelected: function(e) {
+    _historyUrlSelected(e) {
       this.set('url', e.detail.value);
       this.$.request.connect();
-    },
+    }
 
-    _computeRenderHistory: function(connecting, connected) {
+    _computeRenderHistory(connecting, connected) {
       return !connected && !connecting;
-    },
+    }
 
-    _clearMessages: function() {
+    _clearMessages() {
       this.set('messages', undefined);
     }
-  });
+  }
+  window.customElements.define(WebsocketPanel.is, WebsocketPanel);
   </script>
 </dom-module>
