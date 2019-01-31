@@ -8,6 +8,10 @@
  *   websocket-panel.html
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 /// <reference path="../polymer/types/polymer-element.d.ts" />
 /// <reference path="../websocket-request/websocket-request.d.ts" />
 /// <reference path="../websocket-data-view/websocket-data-view.d.ts" />
@@ -67,13 +71,23 @@ declare namespace UiElements {
      * List of communication messages with the server.
      */
     messages: any[]|null|undefined;
+
+    /**
+     * When set it won't automatically query history data when connected to DOM.
+     */
+    noAuto: boolean|null|undefined;
     connectedCallback(): void;
     disconnectedCallback(): void;
 
     /**
      * Sends `websocket-url-history-list` event to query the history.
      */
-    _queryHistory(): void;
+    refreshHistory(): Promise<any>|null;
+
+    /**
+     * Dispatches websocket-url-history-list event and returns it.
+     */
+    _dispatchHistoryList(): CustomEvent|null;
 
     /**
      * Handler for the `websocket-url-history-changed`. Updates the item in
@@ -84,7 +98,7 @@ declare namespace UiElements {
     /**
      * Computes `hasData` property based on the `history` state.
      */
-    _computeHasHistoryData(history: any): any;
+    _computeHasHistoryData(history: Array<object|null>|null|undefined): Boolean|null;
     _historyUrlSelected(e: any): void;
     _computeRenderHistory(connecting: any, connected: any): any;
     _clearMessages(): void;
