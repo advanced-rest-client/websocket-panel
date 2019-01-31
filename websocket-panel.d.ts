@@ -17,7 +17,7 @@
 /// <reference path="../websocket-data-view/websocket-data-view.d.ts" />
 /// <reference path="../websocket-history/websocket-history.d.ts" />
 
-declare namespace UiElements {
+declare namespace ApiElements {
 
   /**
    * A web socket panel with the request and history of calls.
@@ -106,5 +106,5 @@ declare namespace UiElements {
 }
 
 interface HTMLElementTagNameMap {
-  "websocket-panel": UiElements.WebsocketPanel;
+  "websocket-panel": ApiElements.WebsocketPanel;
 }

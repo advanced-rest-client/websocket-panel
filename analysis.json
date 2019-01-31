@@ -4148,7 +4148,7 @@
       },
       "privacy": "public",
       "superclass": "Polymer.Element",
-      "name": "UiElements.WebsocketPanel",
+      "name": "ApiElements.WebsocketPanel",
       "attributes": [
         {
           "name": "url",
