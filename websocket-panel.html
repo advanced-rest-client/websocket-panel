@@ -91,7 +91,11 @@ the License.
           computed: '_computeRenderHistory(connecting, connected)'
         },
         // List of communication messages with the server.
-        messages: Array
+        messages: Array,
+        /**
+         * When set it won't automatically query history data when connected to DOM.
+         */
+        noAuto: Boolean
       };
     }
 
@@ -103,8 +107,8 @@ the License.
     connectedCallback() {
       super.connectedCallback();
       window.addEventListener('websocket-url-history-changed', this._storeItemChanged);
-      if (!this.loading && !this.history) {
-        this._queryHistory();
+      if (!this.loading && !this.history && !this.noAuto) {
+        this.refreshHistory();
       }
     }
 
@@ -112,23 +116,18 @@ the License.
       super.disconnectedCallback();
       window.removeEventListener('websocket-url-history-changed', this._storeItemChanged);
     }
-
     /**
      * Sends `websocket-url-history-list` event to query the history.
+     * @return {Promise}
+     * @throws {Error} When event is not handled.
      */
-    _queryHistory() {
-      const e = new CustomEvent('websocket-url-history-list', {
-        cancelable: true,
-        composed: true,
-        bubbles: true,
-        detail: {}
-      });
-      this.dispatchEvent(e);
+    refreshHistory() {
+      const e = this._dispatchHistoryList();
       if (!e.detail.result) {
         throw new Error('Query not handled');
       }
       this._setLoading(true);
-      e.detail.result
+      return e.detail.result
       .then((data) => {
         this._setLoading(false);
         this.set('history', data);
@@ -137,7 +136,20 @@ the License.
         this._setLoading(false);
       });
     }
-
+    /**
+     * Dispatches websocket-url-history-list event and returns it.
+     * @return {CustomEvent}
+     */
+    _dispatchHistoryList() {
+      const e = new CustomEvent('websocket-url-history-list', {
+        cancelable: true,
+        composed: true,
+        bubbles: true,
+        detail: {}
+      });
+      this.dispatchEvent(e);
+      return e;
+    }
     /**
      *  Handler for the `websocket-url-history-changed`. Updates the item in
      *  the `history` list if available.
@@ -148,7 +160,7 @@ the License.
         return;
       }
       if (!this.history) {
-        this.set('history', e.detail.item);
+        this.set('history', [e.detail.item]);
         return;
       }
       const id = e.detail.item._id;
@@ -160,7 +172,11 @@ the License.
       }
     }
 
-    // Computes `hasData` property based on the `history` state.
+    /**
+     * Computes `hasData` property based on the `history` state.
+     * @param {Array<Object>|undefined} history
+     * @return {Boolean}
+     */
     _computeHasHistoryData(history) {
       if (!history || !history.length) {
         return false;

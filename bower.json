@@ -19,10 +19,9 @@
   },
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "arc-models": "advanced-rest-client/arc-models#2.0.0-preview",
-    "websocket-data-view": "advanced-rest-client/websocket-data-view#2.0.0-preview",
-    "websocket-history": "advanced-rest-client/websocket-history#2.0.0-preview",
-    "websocket-request": "advanced-rest-client/websocket-request#2.0.0-preview"
+    "websocket-data-view": "advanced-rest-client/websocket-data-view#^2.0.0",
+    "websocket-history": "advanced-rest-client/websocket-history#^2.0.0",
+    "websocket-request": "advanced-rest-client/websocket-request#^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^3.0.1",
@@ -31,7 +30,9 @@
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "app-pouchdb": "PolymerElements/app-pouchdb#^2.1.1",
-    "arc-electron-default-theme": "advanced-rest-client/arc-electron-default-theme#2.0.0-preview"
+    "arc-electron-default-theme": "advanced-rest-client/arc-electron-default-theme#2.0.0-preview",
+    "arc-models": "advanced-rest-client/arc-models#2.0.0-preview",
+    "arc-data-generator": "advanced-rest-client/arc-data-generator#^1.0.8"
   },
   "ignore": [
     "**/.*",
