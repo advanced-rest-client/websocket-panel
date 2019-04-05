@@ -3,10 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../websocket-panel.html">
-    <link rel="import" href="../../arc-data-generator/arc-data-generator.html">
+
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../../../mocha/mocha.js"></script>
+    <script src="../../../chai/chai.js"></script>
+    <script src="../../../wct-mocha/wct-mocha.js"></script>
+
   </head>
   <body>
 
@@ -22,8 +25,10 @@
       </template>
     </test-fixture>
 
-    <script>
-    /* global DataGenerator */
+    <script type="module">
+    import '../websocket-panel.js';
+    import {DataGenerator} from '../../arc-data-generator/arc-data-generator.js';
+    import sinon from '../../../sinon/pkg/sinon-esm.js';
     suite('Initialization', function() {
       let element;
       setup(function(done) {
