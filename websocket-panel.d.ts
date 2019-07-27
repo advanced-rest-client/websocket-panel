@@ -5,17 +5,12 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   websocket-panel.html
+ *   websocket-panel.js
  */
 
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
-
-/// <reference path="../polymer/types/polymer-element.d.ts" />
-/// <reference path="../websocket-request/websocket-request.d.ts" />
-/// <reference path="../websocket-data-view/websocket-data-view.d.ts" />
-/// <reference path="../websocket-history/websocket-history.d.ts" />
 
 declare namespace ApiElements {
 
@@ -30,7 +25,7 @@ declare namespace ApiElements {
    * To styles the component check `websocket-request`, `websocket-data-view`
    * and `websocket-history` components.
    */
-  class WebsocketPanel extends Polymer.Element {
+  class WebsocketPanel extends PolymerElement {
 
     /**
      * Remote URL to connect to
@@ -105,6 +100,11 @@ declare namespace ApiElements {
   }
 }
 
-interface HTMLElementTagNameMap {
-  "websocket-panel": ApiElements.WebsocketPanel;
+declare global {
+
+  interface HTMLElementTagNameMap {
+    "websocket-panel": ApiElements.WebsocketPanel;
+  }
 }
+
+export {};
