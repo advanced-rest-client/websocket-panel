@@ -1,8 +1,8 @@
-[![Published on NPM](https://img.shields.io/npm/v/@advanced-rest-client/saved-request-editor.svg)](https://www.npmjs.com/package/@advanced-rest-client/saved-request-editor)
+[![Published on NPM](https://img.shields.io/npm/v/@advanced-rest-client/websocket-panel.svg)](https://www.npmjs.com/package/@advanced-rest-client/websocket-panel)
 
-[![Build Status](https://travis-ci.org/advanced-rest-client/saved-request-editor.svg?branch=stage)](https://travis-ci.org/advanced-rest-client/saved-request-editor)
+[![Build Status](https://travis-ci.org/advanced-rest-client/websocket-panel.svg?branch=stage)](https://travis-ci.org/advanced-rest-client/websocket-panel)
 
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/advanced-rest-client/saved-request-editor)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/@advanced-rest-client/websocket-panel)
 
 
 # websocket-panel
@@ -12,7 +12,7 @@ A web socket panel with the request and history of calls
 ## Example:
 
 ```html
-<saved-request-editor></saved-request-editor>
+<websocket-panel></websocket-panel>
 ```
 
 ## API components
@@ -23,7 +23,7 @@ This components is a part of [API components ecosystem](https://elements.advance
 
 ### Installation
 ```
-npm install --save @advanced-rest-client/saved-request-editor
+npm install --save @advanced-rest-client/websocket-panel
 ```
 
 ### In an html file
@@ -32,11 +32,11 @@ npm install --save @advanced-rest-client/saved-request-editor
 <html>
   <head>
     <script type="module">
-      import './node_modules/@advanced-rest-client/saved-request-editor/saved-request-editor.js';
+      import '@advanced-rest-client/websocket-panel/websocket-panel.js';
     </script>
   </head>
   <body>
-    <saved-request-editor></saved-request-editor>
+    <websocket-panel></websocket-panel>
   </body>
 </html>
 ```
@@ -44,14 +44,12 @@ npm install --save @advanced-rest-client/saved-request-editor
 ### In a Polymer 3 element
 
 ```js
-import {PolymerElement, html} from './node_modules/@polymer/polymer/polymer-element.js';
-import './node_modules/@advanced-rest-client/saved-request-editor/saved-request-editor.js';
+import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
+import '@advanced-rest-client/websocket-panel/websocket-panel.js';
 
 class SampleElement extends PolymerElement {
   static get template() {
-    return html`
-    <saved-request-editor></saved-request-editor>
-    `;
+    return html`<websocket-panel></websocket-panel>`;
   }
 }
 customElements.define('sample-element', SampleElement);
@@ -60,20 +58,18 @@ customElements.define('sample-element', SampleElement);
 ### Installation
 
 ```sh
-git clone https://github.com/advanced-rest-client/saved-request-editor
-cd api-url-editor
-npm install
-npm install -g polymer-cli
+git clone https://github.com/advanced-rest-client/websocket-panel
+cd websocket-panel
+npm i
 ```
 
 ### Running the demo locally
 
 ```sh
-polymer serve --npm
-open http://127.0.0.1:<port>/demo/
+npm start
 ```
 
 ### Running the tests
 ```sh
-polymer test --npm
+npm test
 ```
