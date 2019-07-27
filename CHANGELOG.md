@@ -23,3 +23,12 @@
 
 
 
+# 3.0.0 (2019-07-27)
+
+
+### Features
+
+* lit-element release ([ebc081f](https://github.com/advanced-rest-client/websocket-panel/commit/ebc081f))
+
+
+
